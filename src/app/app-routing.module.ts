@@ -1,0 +1,25 @@
+import { NgModule } from "@angular/core";
+import { Routes,RouterModule } from "@angular/router";
+import { AuthGuard } from "./auth/auth.guard";
+import { MyAccountComponent } from "./my-account/my-account.component";
+import { MyPlaceComponent } from "./my-place/my-place.component";
+import { PlacesComponent } from "./places/places.component";
+
+const appRoutes : Routes = [
+    {path:'', component: PlacesComponent,pathMatch:"full"},
+    {path:'my-account', component: MyAccountComponent, canActivate: [AuthGuard]},
+    {path:'my-place/:placeId', component: MyPlaceComponent , canActivate: [AuthGuard]},
+    //{path:'edit/:placeId', component: MyPlaceComponent },
+    {path:'places', component: PlacesComponent, canActivate: [AuthGuard]},
+    {path:'**', redirectTo:""}
+]
+
+@NgModule({
+    imports:[RouterModule.forRoot(appRoutes)],
+    exports:[RouterModule],
+    providers:[AuthGuard]
+})
+
+export class AppRoutingModule{
+
+}
