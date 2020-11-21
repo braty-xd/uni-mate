@@ -1,21 +1,4 @@
-<!-- <div class="container"> -->
-<!-- <nav class="navbar navbar-dark bg-dark">
-  
-<ul class="nav nav-pills">
-  <li class="nav-brand">
-    <a class="nav-link" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" routerLink="/">Anasayfa</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLinkActive="active" routerLink="/my-account">Hesabim</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLinkActive="active" routerLink="/places">Ilanlar</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" routerLinkActive="active" routerLink="/my-place">Ilan Ver</a>
-  </li>
-</ul>
-</nav> -->
+
 
 <div *ngIf="!isLoggedIn">
 <mat-toolbar color="primary">
@@ -53,10 +36,14 @@
 routerLinkActive #rlb="routerLinkActive" [active]="rlb.isActive"  routerLink="/my-account">
 Hesabim
 </a> 
-<a mat-tab-link
+<a mat-tab-link 
+routerLinkActive #rlc="routerLinkActive" [active]="rlc.isActive"  [(routerLink)]="'/my-place/'+userIdForPlace">
+Ilanim
+</a>
+<!-- <a mat-tab-link *ngIf="!hasPlace"
 routerLinkActive #rlc="routerLinkActive" [active]="rlc.isActive"  routerLink="/my-place">
 Ilanim
-</a> 
+</a>   -->
 <a mat-tab-link
 routerLinkActive #rld="routerLinkActive" [active]="rld.isActive"  routerLink="/places">
 Ilanlar

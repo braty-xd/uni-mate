@@ -41,8 +41,8 @@ export class PlacesService {
       }
 
       getPlace(id: string) {
-        return this.http.get<{ _id: string; title: string; photo: string; description: string; imagePath: string }>(
-          "http://localhost:3000/api/posts/" + id
+        return this.http.get<{ _id: string; title: string; photo: string; description: string; imagePath: string,owner: string }>(
+          "http://localhost:3000/api/places/" + id
         );
       }
 
@@ -69,10 +69,11 @@ export class PlacesService {
           placeData.append("description",description)
           placeData.append("image",image,title)
         }else{  
+          console.log("else")
           placeData= {id: id, title: title, description: description, imagePath: image}
         }
         this.http
-          .put("http://localhost:3000/api/posts/" + id, placeData)
+          .put("http://localhost:3000/api/places/" + id, placeData)
           .subscribe(response => {
             // const updatedPlaces = [...this.places];
             // const oldPlaceIndex = updatedPlaces.findIndex(p => p.id === id);
@@ -80,7 +81,16 @@ export class PlacesService {
             // updatedPlaces[oldPlaceIndex] = place;
             // this.places = updatedPlaces;
             // this.placesUpdated.next([...this.places]);
+            console.log(response)
             this.router.navigate(["/"]);
+          }, err => {
+            console.log(err)
           });
+      }
+
+      deletePlace(id: string) {
+        this.http.delete("http://localhost:3000/api/places/" + id).subscribe(res => {
+          this.router.navigate(["/"])
+        })
       }
 }

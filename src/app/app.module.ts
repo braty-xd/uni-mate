@@ -21,6 +21,7 @@ import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatIconModule} from '@angular/material/icon';
+import {MatSelectModule} from '@angular/material/select';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component'
 import { AuthInterceptor } from './auth/auth-interceptor';
@@ -50,7 +51,8 @@ import { AuthInterceptor } from './auth/auth-interceptor';
     MatProgressSpinnerModule,
     MatPaginatorModule,
     MatToolbarModule,
-    MatIconModule
+    MatIconModule,
+    MatSelectModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor,multi: true}],
   bootstrap: [AppComponent]

@@ -3,6 +3,7 @@ const multer = require("multer");
 
 const checkAuth = require("../middleware/check-auth");
 const Place = require("../models/place");
+const User = require("../models/user");
 
 const MIME_TYPE_MAP = {
   "image/png": "png",
@@ -35,24 +36,28 @@ router.post(
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
     const place = new Place({
-      photo: req.body.photo,
+      //photo: req.body.photo,
       title: req.body.title,
       description: req.body.description,
       imagePath: url + "/images/" + req.file.filename,
       owner: req.userData.userId,
     });
     place.save().then((createdPlace) => {
-      res.status(201).json({
-        message: "Post added successfully",
-        //placeId: createdPlace._id,
-        place: {
-          id: createdPlace._id,
-          title: createdPlace.title,
-          photo: createdPlace.photo,
-          description: createdPlace.description,
-          imagePath: createdPlace.imagePath,
-        },
-      });
+      User.updateOne({ _id: createdPlace.owner }, { hasPlace: true }).then(
+        (result) => {
+          res.status(201).json({
+            message: "Post added successfully",
+            //placeId: createdPlace._id,
+            place: {
+              id: createdPlace._id,
+              title: createdPlace.title,
+              photo: createdPlace.photo,
+              description: createdPlace.description,
+              imagePath: createdPlace.imagePath,
+            },
+          });
+        }
+      );
     });
   }
 );
@@ -84,11 +89,22 @@ router.get("", checkAuth, (req, res, next) => {
 });
 
 router.get("/:id", checkAuth, (req, res, next) => {
-  PLace.findById(req.params.id).then((place) => {
+  //Place.findById(req.params.id).then((place) => {
+  Place.findOne({ owner: req.params.id }).then((place) => {
     if (place) {
       res.status(200).json(place);
     } else {
       res.status(404).json({ message: "Place not found!" });
+    }
+  });
+});
+
+router.delete("/:id", checkAuth, (req, res, next) => {
+  Place.deleteOne({ owner: req.params.id }).then((result) => {
+    if (result.n > 0) {
+      res.status(200).json({ message: "Deletion successful!" });
+    } else {
+      res.status(401).json({ message: "Not authorized!" });
     }
   });
 });
@@ -99,18 +115,31 @@ router.put(
   multer({ storage: storage }).single("image"),
   (req, res, next) => {
     let imagePath = req.body.imagePath;
+    let placeId;
     if (req.file) {
+      console.log("girdim");
       const url = req.protocol + "://" + req.get("host");
       imagePath = url + "/images/" + req.file.filename;
     }
-    const place = new Place({
-      _id: req.body.id,
+    const place = {
+      //_id: req.body.id,
       title: req.body.title,
       description: req.body.description,
       imagePath: imagePath,
-    });
-    Place.updateOne({ _id: req.params.id }, place).then((result) => {
-      res.status(200).json({ message: "Update successful!" });
+    };
+    Place.findOne({ owner: req.userData.userId }).then((resultt) => {
+      placeId = resultt._id;
+      Place.updateOne({ _id: placeId, owner: req.userData.userId }, place)
+        .then((result) => {
+          if (result.nModified > 0) {
+            res.status(200).json({ message: "Update successful!" });
+          } else {
+            res.status(401).json({ message: "Update failed!" });
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 );

@@ -1,1 +1,27 @@
-<p>my-account works!</p>
+<mat-card>
+    <h4>mat-select</h4>
+<form #SaveUni="ngForm" (submit)="onSaveUniversity(SaveUni)">
+<mat-form-field appearance="fill">
+  <mat-label>Sehir</mat-label>
+  <!-- [(value)]="selectedCity" -->
+  <mat-select [(ngModel)]="selectedCity" name="myCity"  #myCity="ngModel" required (selectionChange)="onCityChange()">
+    <!-- <mat-option>None</mat-option> -->
+    <mat-option *ngFor="let city of cities" [value]="city">{{city}}</mat-option>
+  </mat-select>
+</mat-form-field>
+<div *ngIf="selectedCity">
+    <mat-form-field appearance="fill">
+        <mat-label>Universite</mat-label>
+        <mat-select [(ngModel)]="selectedUniversity" name="myUni"  #myUni="ngModel" required>
+          <mat-option *ngFor="let uni of universities[selectedCity]" [value]="uni">{{uni}}</mat-option>
+        </mat-select>
+      </mat-form-field>
+</div>
+<button
+  mat-raised-button
+  [disabled]="!selectedUniversity"
+  color="primary"
+  style="display:block; margin-left: auto;"
+  type="submit">Save University</button>
+</form>
+</mat-card>

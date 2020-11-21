@@ -3,9 +3,11 @@ const Place = require("../models/place");
 const bcrypt = require("bcrypt");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const checkAuth = require("../middleware/check-auth");
 
 const User = require("../models/user");
 const { json } = require("body-parser");
+const e = require("express");
 //const user = require("../models/user");
 
 router.post("/sign-up", (req, res, next) => {
@@ -13,6 +15,7 @@ router.post("/sign-up", (req, res, next) => {
     const user = new User({
       email: req.body.email,
       passwd: hash,
+      hasPlace: false,
     });
     user
       .save()
@@ -56,6 +59,8 @@ router.post("/sign-in", (req, res, next) => {
       res.status(200).json({
         token: token,
         expiresIn: 10800,
+        userId: newUser._id,
+        hasPlace: newUser.hasPlace,
       });
     })
     .catch((err) => {
@@ -63,6 +68,20 @@ router.post("/sign-in", (req, res, next) => {
         message: err,
       });
     });
+});
+
+router.get("/:id", checkAuth, (req, res, next) => {
+  User.findById(req.params.id).then((user) => {
+    if (user) {
+      res.status(200).json({
+        hasPlace: user.hasPlace,
+      });
+    } else {
+      res.status(401).json({
+        message: "user not found",
+      });
+    }
+  });
 });
 
 module.exports = router;

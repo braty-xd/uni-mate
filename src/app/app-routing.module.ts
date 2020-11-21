@@ -8,10 +8,11 @@ import { PlacesComponent } from "./places/places.component";
 const appRoutes : Routes = [
     {path:'', component: PlacesComponent,pathMatch:"full"},
     {path:'my-account', component: MyAccountComponent, canActivate: [AuthGuard]},
-    {path:'my-place/:placeId', component: MyPlaceComponent , canActivate: [AuthGuard]},
+    {path:'my-place', component: MyPlaceComponent , canActivate: [AuthGuard], pathMatch: "full"},
+    {path:'my-place/:placeId', component: MyPlaceComponent , canActivate: [AuthGuard], pathMatch: "full"},
     //{path:'edit/:placeId', component: MyPlaceComponent },
     {path:'places', component: PlacesComponent, canActivate: [AuthGuard]},
-    {path:'**', redirectTo:""}
+    //{path:'**', redirectTo:""}
 ]
 
 @NgModule({

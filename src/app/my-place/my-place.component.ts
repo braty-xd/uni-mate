@@ -4,6 +4,7 @@ import { ActivatedRoute, ParamMap } from "@angular/router";
 import { PlacesService } from "../places/places.service"
 import { Place } from "../places/place.model"
 import { mimeType } from "./mime-type.validator"
+import { AuthService } from '../auth/auth.service';
 
 
 @Component({
@@ -19,33 +20,52 @@ export class MyPlaceComponent implements OnInit {
   imagePreview: string =""
   private mode = "create";
   private placeId: string;
+  private userId: string
+  private hasPlace: boolean
 
   constructor(
     public placesService: PlacesService,
+    private authService: AuthService,
     public route: ActivatedRoute
     ) {}
 
   ngOnInit(): void {
+    this.isLoading = true;
+    this.userId = localStorage.getItem("userId")
+    console.log(this.userId)
     this.form = new FormGroup({
       'title': new FormControl(null, {validators: [Validators.required]}),
       'description': new FormControl(null, {validators: [Validators.required]}),
       'image': new FormControl(null, {validators:[Validators.required], asyncValidators: [mimeType]})
     })
-    this.route.paramMap.subscribe((paramMap: ParamMap) => {
-      if (paramMap.has("placeId")) {
-        this.mode = "edit";
-        this.placeId = paramMap.get("placeId");
-        this.isLoading = true;
-        this.placesService.getPlace(this.placeId).subscribe(placeData => {
+    this.authService.getHasPlace(this.userId).subscribe((userHasPlace) => {
+      console.log(this.userId)
+      this.hasPlace = userHasPlace.hasPlace
+      if(userHasPlace.hasPlace){
+        //console.log("yarek")
+        
+        this.placesService.getPlace(this.userId).subscribe(placeData => {
           this.isLoading = false;
           this.place = {id: placeData._id, title: placeData.title, description: placeData.description, imagePath: placeData.imagePath};
           this.form.setValue({'title':this.place.title, image:this.place.imagePath,'description':this.place.description})
+        },(err) => {
+          console.log("zaaaadfafsdfg")
         });
-      } else {
-        this.mode = "create";
-        this.placeId = null;
       }
-    });
+      this.isLoading = false
+    })
+    
+    // this.route.paramMap.subscribe((paramMap: ParamMap) => {
+    //   if (paramMap.has("placeId")) {
+    //     this.mode = "edit";
+    //     this.placeId = paramMap.get("placeId");
+    //     console.log(this.placeId)
+        
+    //   } else {
+    //     this.mode = "create";
+    //     this.placeId = null;
+    //   }
+    // });
   }
   onSavePlace() {
     if (this.form.invalid) {
@@ -53,11 +73,12 @@ export class MyPlaceComponent implements OnInit {
       return;
     }
     this.isLoading = true
-    if (this.mode === "create") {
+    if (!this.hasPlace) {
       this.placesService.addPlace(this.form.value.title, this.form.value.description,this.form.value.image);
     }else {
+      console.log("zaqa")
       this.placesService.updatePlace(
-        this.placeId,
+        this.userId,
         this.form.value.title,
         this.form.value.description,
         this.form.value.image
@@ -79,5 +100,8 @@ export class MyPlaceComponent implements OnInit {
     reader.readAsDataURL(file)
   }
   
+  onDelete() {
+    this.placesService.deletePlace(this.userId)
+  }
 
 }

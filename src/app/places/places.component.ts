@@ -40,7 +40,10 @@ export class PlacesComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.placesSub.unsubscribe()
+    if(this.placesSub){
+      this.placesSub.unsubscribe()
+    }
+    
   }
 
 }

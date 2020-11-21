@@ -9,6 +9,7 @@ const usersRoutes = require("./routes/users");
 const app = express();
 
 mongoose.set("useCreateIndex", true);
+mongoose.set("useFindAndModify", false);
 
 mongoose
   .connect(

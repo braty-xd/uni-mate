@@ -1,14 +1,9 @@
 <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
 <form [formGroup]="form" (submit)="onSavePlace()" *ngIf="!isLoading">
-<!-- <mat-form-field appearance="fill" style="width: 25%;">
-    <mat-label>Enter your email</mat-label>
-    <input matInput placeholder="pat@example.com" [formControl]="required" required>
-    <mat-error *ngIf="email.invalid">{{getErrorMessage()}}</mat-error>
-</mat-form-field> -->
 <mat-form-field appearance="fill" style="width: 50%;">
     <mat-label>title</mat-label>
-    <input  formControlName="title" matInput placeholder="title" name="title" >
+    <input  formControlName="title"  matInput placeholder="title" name="title" >
     <mat-error *ngIf="form.get('title').invalid">Enter a title</mat-error>
 </mat-form-field>
 
@@ -27,7 +22,13 @@
 <button
 mat-raised-button
 color="primary"
-style="margin-top: 1rem;"
+style="display: block; margin-left: auto; width: 10%;"
 type="submit">Save Post</button>
+<button
+mat-raised-button *ngIf="hasPlace"
+color="accent"
+style="display: block;  margin-top: 1rem; margin-left: auto; width: 10%;"
+(click)="onDelete()"
+type="button">Delete Post</button>
 </form>
 </mat-card>
