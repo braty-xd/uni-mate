@@ -1,14 +1,32 @@
+
+    <div *ngIf="!isCitySelected">
+      <mat-spinner *ngIf="isLoading"></mat-spinner>
+      <div class="card text-white bg-danger mb-3" style="max-width: 100%;" *ngIf="!isLoading">
+        <div class="card-header">Dikkat</div>
+        <div class="card-body">
+          <h5 class="card-title">Mevcut Universite Bulunamadi</h5>
+          <p class="card-text">Sehrinizdeki ilanlari gormek icin universitenizi seciniz</p>
+        </div>
+      </div>
+      
+    </div>
+
+
+<div *ngIf="isCitySelected">
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <div *ngIf="!isLoading">
 <mat-card class="example-card" *ngFor="let place of places">
     <mat-card-header>
-      <img mat-card-avatar src="https://i.pinimg.com/564x/d9/56/9b/d9569bbed4393e2ceb1af7ba64fdf86a.jpg">
+      <img mat-card-avatar src="https://banner2.cleanpng.com/20180206/wzw/kisspng-house-clip-art-housing-cliparts-5a79b9d6e34e74.0473159715179268709311.jpg">
       <mat-card-title>{{ place.title}}</mat-card-title>
-      <mat-card-subtitle>Dog Breed</mat-card-subtitle>
+      <mat-card-subtitle>{{place.university}}</mat-card-subtitle>
     </mat-card-header>
-    <img mat-card-lg-image src={{place.imagePath}} alt="Photo of a Shiba Inu">
+    <a href={{place.imagePath}}>
+      <img mat-card-lg-image src={{place.imagePath}} alt="Photo of a Shiba Inu" (click)="onImageClick()">
+    </a>
+    
     <mat-card-content style="margin-top: 10px;">
-      <p>{{ place.description }}</p>
+      <h3>{{ place.description }}</h3>
     </mat-card-content>
     <!-- <mat-card-actions>
       <button mat-button>LIKE</button>
@@ -25,3 +43,4 @@
 (page)="onChangedPage($event)"
 *ngIf="places.length > 0"
 ></mat-paginator>
+</div>

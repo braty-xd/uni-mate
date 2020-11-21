@@ -3,6 +3,7 @@ import { Injectable } from "@angular/core";
 import { AuthData } from "./auth-data.model"
 import {Router} from "@angular/router"
 import { Subject } from "rxjs";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 @Injectable({providedIn:"root"})
 export class AuthService{
@@ -19,8 +20,8 @@ export class AuthService{
         return this.userId
     }
 
-    getHasPlace(userId: string) {
-        return this.http.get<{hasPlace: boolean}>(
+    getUser(userId: string) {
+        return this.http.get<{hasPlace: boolean, user: any}>(
             "http://localhost:3000/api/users/" + userId
         )
     }
@@ -38,18 +39,30 @@ export class AuthService{
 
 
 
-    createUser(email: string, passwd: string) {
+    createUser(email: string, passwd: string,snackbar: MatSnackBar){
         const authData: AuthData = {
             email: email,
             passwd: passwd
         }
         this.http.post("http://localhost:3000/api/users/sign-up",authData)
         .subscribe(response => {
+            //this.router.navigate(["/"]);
+            //window.location.reload();
+            snackbar.open("Uyelik Olusturuldu!!!","Geri Don",{duration: 3000})
+        }, err => {
+            snackbar.open("Bu email zaten kullaniliyor. Baska email ile deneyin","Geri Don",{duration: 3000})
+            console.log("KULLANICI VAR")
+        })
+    }
+
+    updateUserCity(userId:string, city: string, university: string) {
+        this.http.put("http://localhost:3000/api/users/" + userId,{city:city,university:university})
+        .subscribe(res => {
             this.router.navigate(["/"]);
         })
     }
 
-    login(email: string, passwd: string) {
+    login(email: string, passwd: string,snackbar: MatSnackBar) {
         const authData: AuthData = {
             email: email,
             passwd: passwd
@@ -73,6 +86,8 @@ export class AuthService{
             }
             
             this.router.navigate(["/"]);
+        }, err => {
+            snackbar.open("Kullanici adi ve ya sifre hatali","Geri Don",{duration: 3000})
         })
     }
 

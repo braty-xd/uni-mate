@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { AuthService } from '../auth.service';
+import {
+  MatSnackBar,
+} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sign-in',
@@ -10,7 +13,7 @@ import { AuthService } from '../auth.service';
 export class SignInComponent implements OnInit {
   hide=true
   isLoading = false
-  constructor(public authService: AuthService) { }
+  constructor(public authService: AuthService,private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
   }
@@ -21,7 +24,7 @@ export class SignInComponent implements OnInit {
       return;
     }else{
       console.log("asd")
-      this.authService.login(form.value.email,form.value.passwd)
+      this.authService.login(form.value.email,form.value.passwd,this._snackBar)
     }
   }
 

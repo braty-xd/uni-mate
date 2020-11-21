@@ -75,6 +75,7 @@ router.get("/:id", checkAuth, (req, res, next) => {
     if (user) {
       res.status(200).json({
         hasPlace: user.hasPlace,
+        user: user,
       });
     } else {
       res.status(401).json({
@@ -82,6 +83,32 @@ router.get("/:id", checkAuth, (req, res, next) => {
       });
     }
   });
+});
+
+router.put("/:id", checkAuth, (req, res, next) => {
+  if (!req.body.university) {
+    User.updateOne(
+      { _id: req.params.id },
+      { hasPlace: req.body.hasPlace }
+    ).then((result) => {
+      if (result.n > 0) {
+        res.status(200).json({ message: "Update successful!" });
+      } else {
+        res.status(401).json({ message: "Update faileaaaaaad!" });
+      }
+    });
+  } else {
+    User.updateOne(
+      { _id: req.params.id },
+      { city: req.body.city, university: req.body.university }
+    ).then((result) => {
+      if (result.n > 0) {
+        res.status(200).json({ message: "Update successful!" });
+      } else {
+        res.status(401).json({ message: "Update faileaaaaaad!" });
+      }
+    });
+  }
 });
 
 module.exports = router;

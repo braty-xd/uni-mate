@@ -41,6 +41,8 @@ router.post(
       description: req.body.description,
       imagePath: url + "/images/" + req.file.filename,
       owner: req.userData.userId,
+      city: req.body.city,
+      university: req.body.uni,
     });
     place.save().then((createdPlace) => {
       User.updateOne({ _id: createdPlace.owner }, { hasPlace: true }).then(
@@ -65,7 +67,7 @@ router.post(
 router.get("", checkAuth, (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
-  const placeQuery = Place.find();
+  const placeQuery = Place.find({ city: req.query.usercity });
   let fetchedPlaces;
   if (pageSize && currentPage) {
     placeQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
@@ -73,7 +75,7 @@ router.get("", checkAuth, (req, res, next) => {
   placeQuery
     .then((documents) => {
       fetchedPlaces = documents;
-      return Place.countDocuments();
+      return Place.countDocuments({ city: req.query.usercity });
       // res.status(200).json({
       //   message: "Posts fetched successfully!",
       //   places: documents,
@@ -131,10 +133,10 @@ router.put(
       placeId = resultt._id;
       Place.updateOne({ _id: placeId, owner: req.userData.userId }, place)
         .then((result) => {
-          if (result.nModified > 0) {
+          if (result.n > 0) {
             res.status(200).json({ message: "Update successful!" });
           } else {
-            res.status(401).json({ message: "Update failed!" });
+            res.status(401).json({ message: "Update faileaaaaaad!" });
           }
         })
         .catch((err) => {

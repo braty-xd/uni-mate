@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { NgForm } from '@angular/forms';
+import { AuthService } from '../auth/auth.service';
+import { PlacesService } from '../places/places.service';
+import {MatDialog} from '@angular/material/dialog';
+import {ConfirmDialogComponent} from './confirm-dialog/confirm-dialog.component'
+
+
 
 @Component({
   selector: 'app-my-account',
@@ -7,6 +13,65 @@ import { NgForm } from '@angular/forms';
   styleUrls: ['./my-account.component.css']
 })
 export class MyAccountComponent implements OnInit {
+  userCity: string
+  userUni: string
+  userId: string
+  hasPlace: boolean
+  selectedCity: string
+  selectedUniversity: string
+  myPlace: any
+
+  constructor(private authService: AuthService, private placesService: PlacesService, public dialog: MatDialog) {}
+
+  ngOnInit(): void {
+    this.authService.getUser(localStorage.getItem("userId")).subscribe((user) => {
+      this.userCity = user.user.city
+      this.userUni = user.user.university
+      this.userId = user.user._id
+      this.hasPlace = user.hasPlace
+      if(this.hasPlace){
+        this.placesService.getPlace(localStorage.getItem("userId")).subscribe(place => {          
+          this.myPlace = place
+        })
+      }
+    })
+    
+    
+  }
+
+  onCityChange(){
+   //console.log(this.universities)
+    //console.log(this.selectedCity)
+    //console.log(this.universities[this.selectedCity])
+  }
+
+  onSaveUniversity(form: NgForm){
+    console.log('zzzz')
+    console.log(this.myPlace)
+    if(this.hasPlace && form.value.myCity !== this.myPlace.city && this.hasPlace){
+      const dialogRef = this.dialog.open(ConfirmDialogComponent)
+
+      dialogRef.afterClosed().subscribe(res =>{
+        if(res){
+          this.placesService.deletePlace(this.userId)
+          this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
+        }
+      })
+    }else{
+      this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
+    }
+    //this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
+  }
+
+
+
+
+
+
+
+
+
+
 
   cities = ['Adana', 'Adıyaman', 'Afyon', 'Ağrı','Aksaray', 'Amasya', 'Ankara', 'Antalya','Ardahan', 'Artvin',
   'Aydın', 'Balıkesir','Bartın','Batman', 'Bayburt','Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa', 'Çanakkale',
@@ -54,28 +119,5 @@ export class MyAccountComponent implements OnInit {
 'Trabzon':['Karadeniz Teknik Üniversitesi','Trabzon Üniversitesi','Avrasya Üniversitesi'],'Tunceli':['	Munzur Üniversitesi'],'Uşak':['Uşak Üniversitesi'],'Van':['Van Yüzüncü Yıl Üniversitesi'],'Yalova':['Yalova Üniversitesi'],'Yozgat':['Yozgat Bozok Üniversitesi'],
 'Zonguldak':['Zonguldak Bülent Ecevit Üniversitesi']}
 
-
-
-
-
-
-
-  selectedCity: string
-  selectedUniversity: string
-
-  constructor() {}
-
-  ngOnInit(): void {
-  }
-
-  onCityChange(){
-    console.log(this.universities)
-    console.log(this.selectedCity)
-    //console.log(this.universities[this.selectedCity])
-  }
-
-  onSaveUniversity(form: NgForm){
-
-  }
 
 }

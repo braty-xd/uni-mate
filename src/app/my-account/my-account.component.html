@@ -1,5 +1,8 @@
 <mat-card>
-    <h4>mat-select</h4>
+    <h2>Sehir</h2>
+    <h3>{{userCity}}</h3>
+    <h2>Universite</h2>
+    <h3>{{userUni}}</h3>
 <form #SaveUni="ngForm" (submit)="onSaveUniversity(SaveUni)">
 <mat-form-field appearance="fill">
   <mat-label>Sehir</mat-label>
@@ -22,6 +25,6 @@
   [disabled]="!selectedUniversity"
   color="primary"
   style="display:block; margin-left: auto;"
-  type="submit">Save University</button>
+  type="submit">Universiteyi Kaydet</button>
 </form>
 </mat-card>

@@ -1,0 +1,12 @@
+<mat-card fxLayoutGap>
+
+    <p mat-dialog-title>Uyari</p>
+
+    <p display-2>Bulundugunuz sehri degistirmek uzeresiniz. Ilaniniz silinecek Onayliyor musunuz?</p>
+
+
+    <div mat-dialog-actions>
+        <button mat-button (click)="onDismiss()">Hayir</button>
+        <button mat-raised-button color="primary" (click)="onConfirm()">Evet</button>
+    </div>
+</mat-card>

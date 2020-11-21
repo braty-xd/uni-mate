@@ -20,8 +20,10 @@ export class MyPlaceComponent implements OnInit {
   imagePreview: string =""
   private mode = "create";
   private placeId: string;
+  private user: any
   private userId: string
   private hasPlace: boolean
+  isCitySelected: boolean
 
   constructor(
     public placesService: PlacesService,
@@ -34,19 +36,30 @@ export class MyPlaceComponent implements OnInit {
     this.userId = localStorage.getItem("userId")
     console.log(this.userId)
     this.form = new FormGroup({
-      'title': new FormControl(null, {validators: [Validators.required]}),
+      'title': new FormControl(null, {validators: [Validators.required,Validators.maxLength(50)]}),
       'description': new FormControl(null, {validators: [Validators.required]}),
       'image': new FormControl(null, {validators:[Validators.required], asyncValidators: [mimeType]})
     })
-    this.authService.getHasPlace(this.userId).subscribe((userHasPlace) => {
+    this.authService.getUser(this.userId).subscribe((user) => {
       console.log(this.userId)
-      this.hasPlace = userHasPlace.hasPlace
-      if(userHasPlace.hasPlace){
+      console.log(user)
+      if(user.user.city){
+        this.isCitySelected  = true
+      }else{
+        this.isCitySelected  = false
+      }
+      this.hasPlace = user.hasPlace
+      this.user = user
+      console.log("burada")
+      console.log(this.user)
+      if(user.hasPlace){
         //console.log("yarek")
         
         this.placesService.getPlace(this.userId).subscribe(placeData => {
           this.isLoading = false;
-          this.place = {id: placeData._id, title: placeData.title, description: placeData.description, imagePath: placeData.imagePath};
+          this.place = {id: placeData._id, title: placeData.title, description: placeData.description, 
+            imagePath: placeData.imagePath,city:placeData.city, university:placeData.university};
+          this.imagePreview = this.place.imagePath
           this.form.setValue({'title':this.place.title, image:this.place.imagePath,'description':this.place.description})
         },(err) => {
           console.log("zaaaadfafsdfg")
@@ -74,7 +87,11 @@ export class MyPlaceComponent implements OnInit {
     }
     this.isLoading = true
     if (!this.hasPlace) {
-      this.placesService.addPlace(this.form.value.title, this.form.value.description,this.form.value.image);
+      console.log("city")
+      console.log(this.user.city)
+      console.log("uni")
+      console.log(this.user.university)
+      this.placesService.addPlace(this.form.value.title, this.form.value.description,this.form.value.image,this.user.user.city,this.user.user.university);
     }else {
       console.log("zaqa")
       this.placesService.updatePlace(

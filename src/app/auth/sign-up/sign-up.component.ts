@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import {NgForm} from '@angular/forms';
 import { AuthService } from '../auth.service';
+import {
+  MatSnackBar,
+} from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-sign-up',
@@ -10,7 +13,7 @@ import { AuthService } from '../auth.service';
 export class SignUpComponent implements OnInit {
   hide = true
   isLoading = false
-  constructor(public authService:AuthService) { }
+  constructor(public authService:AuthService,private _snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
   }
@@ -19,7 +22,8 @@ export class SignUpComponent implements OnInit {
     if(form.invalid){
       return;
     }else{
-      this.authService.createUser(form.value.email,form.value.passwd)
+      this.authService.createUser(form.value.email,form.value.passwd,this._snackBar)
+      form.resetForm()
     }
   }
 

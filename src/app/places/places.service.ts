@@ -13,25 +13,31 @@ export class PlacesService {
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    getPlaces(placesPerPage: number, currentPage: number) {
-      const queryParams = `?pagesize=${placesPerPage}&page=${currentPage}`
+    getPlaces(placesPerPage: number, currentPage: number,userCity:string) {
+      console.log("artik")
+      const queryParams = `?pagesize=${placesPerPage}&page=${currentPage}&usercity=${userCity}`
         this.http
           .get<{ message: string; places: any; maxPlaces: number }>(
             "http://localhost:3000/api/places" + queryParams
           )
           .pipe(map((placeData) => {
+            console.log("degisik")
             return { places: placeData.places.map(place => {
               return {
                 title: place.title,
                 description: place.description,
                 id: place._id,
                 imagePath: place.imagePath,
-                owner: place.owner
+                owner: place.owner,
+                city: place.city,
+                university: place.university
               };
             }), maxPlaces: placeData.maxPlaces};
           }))
           .subscribe(transformedPlaceData => {
             this.places = transformedPlaceData.places;
+            console.log("AAAAAAAAAAAAAAAAAAAA")
+            console.log(this.places)
             this.placesUpdated.next({places:[...this.places],maxPlaces:transformedPlaceData.maxPlaces});
           });
       }
@@ -41,15 +47,18 @@ export class PlacesService {
       }
 
       getPlace(id: string) {
-        return this.http.get<{ _id: string; title: string; photo: string; description: string; imagePath: string,owner: string }>(
+        return this.http.get<{ _id: string; title: string; photo: string; description: string; 
+          imagePath: string;owner: string; city: string; university: string }>(
           "http://localhost:3000/api/places/" + id
         );
       }
 
-      addPlace(title: string, description: string, image: File) {
+      addPlace(title: string, description: string, image: File,city: string, uni: string) {
         const placeData = new FormData()
         placeData.append("title", title)
         placeData.append("description", description)
+        placeData.append("city", city)
+        placeData.append("uni", uni)
         placeData.append("image", image, title)
         //const place: Place = { id: null, title: title, photo: photo, description: description };
         this.http
@@ -70,7 +79,9 @@ export class PlacesService {
           placeData.append("image",image,title)
         }else{  
           console.log("else")
+          
           placeData= {id: id, title: title, description: description, imagePath: image}
+          console.log(placeData)
         }
         this.http
           .put("http://localhost:3000/api/places/" + id, placeData)
@@ -90,7 +101,10 @@ export class PlacesService {
 
       deletePlace(id: string) {
         this.http.delete("http://localhost:3000/api/places/" + id).subscribe(res => {
-          this.router.navigate(["/"])
+          this.http.put("http://localhost:3000/api/users/" + id,{hasPlace: false}).subscribe(res =>{
+            this.router.navigate(["/"])
+          })
+          
         })
       }
 }
