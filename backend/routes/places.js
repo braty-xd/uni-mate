@@ -1,5 +1,6 @@
 const express = require("express");
 const multer = require("multer");
+const { consoleTestResultHandler } = require("tslint/lib/test");
 
 const checkAuth = require("../middleware/check-auth");
 const Place = require("../models/place");
@@ -13,6 +14,7 @@ const MIME_TYPE_MAP = {
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
+    console.log(file.mimetype);
     const isValid = MIME_TYPE_MAP[file.mimetype];
     let error = new Error("Invalid mime type");
     if (isValid) {
@@ -32,14 +34,21 @@ const router = express.Router();
 router.post(
   "",
   checkAuth,
-  multer({ storage: storage }).single("image"),
+  multer({ storage: storage }).array("image"),
   (req, res, next) => {
     const url = req.protocol + "://" + req.get("host");
+
+    let images = [];
+    for (const fls of req.files) {
+      const newUrl = url + "/images/" + fls.filename;
+      images.push(newUrl);
+    }
+
     const place = new Place({
-      //photo: req.body.photo,
       title: req.body.title,
       description: req.body.description,
-      imagePath: url + "/images/" + req.file.filename,
+      //imagePath: url + "/images/" + req.file.filename,
+      imagePath: images,
       owner: req.userData.userId,
       city: req.body.city,
       university: req.body.uni,
@@ -114,20 +123,29 @@ router.delete("/:id", checkAuth, (req, res, next) => {
 router.put(
   "/:id",
   checkAuth,
-  multer({ storage: storage }).single("image"),
+  multer({ storage: storage }).array("image"),
   (req, res, next) => {
-    let imagePath = req.body.imagePath;
+    //let imagePath = req.body.imagePath;
     let placeId;
-    if (req.file) {
+    //let images = req.body.imagePath;
+    let images = [];
+    console.log("putta");
+    //console.log(images);
+    if (req.files) {
       console.log("girdim");
       const url = req.protocol + "://" + req.get("host");
-      imagePath = url + "/images/" + req.file.filename;
+      //imagePath = url + "/images/" + req.file.filename;
+      console.log(req.files);
+      for (const fls of req.files) {
+        const newUrl = url + "/images/" + fls.filename;
+        images.push(newUrl);
+      }
     }
     const place = {
       //_id: req.body.id,
       title: req.body.title,
       description: req.body.description,
-      imagePath: imagePath,
+      imagePath: images,
     };
     Place.findOne({ owner: req.userData.userId }).then((resultt) => {
       placeId = resultt._id;

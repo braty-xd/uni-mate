@@ -28,7 +28,6 @@ export class PlacesComponent implements OnInit, OnDestroy {
     this.isLoading = true
     this.currentPage = pageData.pageIndex + 1
     this.placesPerPage = pageData.pageSize
-    console.log(this.userCity)
     this.placesService.getPlaces(this.placesPerPage,this.currentPage,this.userCity);
   }
 
@@ -37,18 +36,14 @@ export class PlacesComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    console.log("aq")
     this.isLoading = true
     this.authService.getUser(localStorage.getItem("userId")).subscribe((user) => {
-      console.log(user)
-      console.log(user.user.city)
       this.userCity = user.user.city
       if(user.user.city){
         this.isCitySelected  = true
       }else{
         this.isCitySelected  = false
       }
-      console.log(this.isCitySelected)
       this.placesService.getPlaces(this.placesPerPage,this.currentPage,this.userCity);
     })
     this.placesSub = this.placesService.getPlaceUpdateListener()
@@ -56,12 +51,7 @@ export class PlacesComponent implements OnInit, OnDestroy {
       this.isLoading = false
       this.places = placeData.places;
       this.maxPlaces = placeData.maxPlaces
-      console.log(this.places)
     });
-    console.log("aq")
-    console.log(this.userCity)
-    
-    console.log(this.places)
   }
 
 

@@ -7,6 +7,7 @@ import { mimeType } from "./mime-type.validator"
 import { AuthService } from '../auth/auth.service';
 
 
+
 @Component({
   selector: 'app-my-place',
   templateUrl: './my-place.component.html',
@@ -17,13 +18,15 @@ export class MyPlaceComponent implements OnInit {
   place: Place
   isLoading = false
   form: FormGroup
-  imagePreview: string =""
+  //imagePreview: string =""
+  imagePreview: string[] = []
   private mode = "create";
   private placeId: string;
   private user: any
   private userId: string
   private hasPlace: boolean
   isCitySelected: boolean
+  imageFiles: any[] =[]
 
   constructor(
     public placesService: PlacesService,
@@ -33,16 +36,15 @@ export class MyPlaceComponent implements OnInit {
 
   ngOnInit(): void {
     this.isLoading = true;
+    //this.getImage()
     this.userId = localStorage.getItem("userId")
-    console.log(this.userId)
     this.form = new FormGroup({
       'title': new FormControl(null, {validators: [Validators.required,Validators.maxLength(50)]}),
       'description': new FormControl(null, {validators: [Validators.required]}),
-      'image': new FormControl(null, {validators:[Validators.required], asyncValidators: [mimeType]})
+      'image': new FormControl(null, {validators:[Validators.required], asyncValidators: [mimeType]}),
+      //'images' : new FormControl(null)
     })
     this.authService.getUser(this.userId).subscribe((user) => {
-      console.log(this.userId)
-      console.log(user)
       if(user.user.city){
         this.isCitySelected  = true
       }else{
@@ -60,7 +62,49 @@ export class MyPlaceComponent implements OnInit {
           this.place = {id: placeData._id, title: placeData.title, description: placeData.description, 
             imagePath: placeData.imagePath,city:placeData.city, university:placeData.university};
           this.imagePreview = this.place.imagePath
-          this.form.setValue({'title':this.place.title, image:this.place.imagePath,'description':this.place.description})
+          console.log("deneme")
+          console.log(this.imagePreview[0])
+
+          for(const img of this.imagePreview){
+            // const indx = img.lastIndexOf("\.")
+            // let tmpText = img.slice(indx+1,img.length)
+            // let myType
+            // if(tmpText === "jpeg" || tmpText === "jpg"){
+            //   myType = "image/jpg"
+            // }else {
+            //   myType = "image/png"
+            // }
+            // console.log("before img")
+            // console.log(img)
+            // console.log("after")
+            // const aq = new File([""],img,{type:myType})
+            // console.log(aq)
+            // console.log(this.getImage(img))
+            //this.imageFiles.push(aq)
+            //this.imageFiles.push(this.getImage(img))
+            let b
+            fetch(img)
+            .then(res => res.blob()) // Gets the response and returns it as a blob
+            .then(blob => {
+              // Here's where you get access to the blob
+              // And you can use it for whatever you want
+              // Like calling ref().put(blob)
+              b = blob
+              // Here, I use it to make an image appear on the page
+              console.log("blob")
+              console.log(blob)
+              b.lastModified = Date.now();
+              b.name = img;
+              //return b
+              console.log("dosyammm")
+              console.log(b)
+              this.imageFiles.push(b)
+               
+          })
+
+          }
+
+          this.form.setValue({'title':this.place.title, 'image':this.imagePreview[0],'description':this.place.description})
         },(err) => {
           console.log("zaaaadfafsdfg")
         });
@@ -68,17 +112,7 @@ export class MyPlaceComponent implements OnInit {
       this.isLoading = false
     })
     
-    // this.route.paramMap.subscribe((paramMap: ParamMap) => {
-    //   if (paramMap.has("placeId")) {
-    //     this.mode = "edit";
-    //     this.placeId = paramMap.get("placeId");
-    //     console.log(this.placeId)
-        
-    //   } else {
-    //     this.mode = "create";
-    //     this.placeId = null;
-    //   }
-    // });
+
   }
   onSavePlace() {
     if (this.form.invalid) {
@@ -91,14 +125,15 @@ export class MyPlaceComponent implements OnInit {
       console.log(this.user.city)
       console.log("uni")
       console.log(this.user.university)
-      this.placesService.addPlace(this.form.value.title, this.form.value.description,this.form.value.image,this.user.user.city,this.user.user.university);
+      this.placesService.addPlace(this.form.value.title, this.form.value.description,this.imageFiles,this.user.user.city,this.user.user.university);
     }else {
       console.log("zaqa")
       this.placesService.updatePlace(
         this.userId,
         this.form.value.title,
         this.form.value.description,
-        this.form.value.image
+        //this.form.value.image
+        this.imageFiles
       );
     }
     
@@ -108,11 +143,22 @@ export class MyPlaceComponent implements OnInit {
 
   onImagePicked(event: Event){
     const file = (event.target as HTMLInputElement).files[0]
+
+    // const tmpFile = this.form.value.image
+    // console.log(tmpFile)
+    // tmpFile.push(file)
+    //this.imageFiles
+    console.log("onemli")
+    console.log(file)
+    this.imageFiles.push(file)
     this.form.patchValue({'image': file})
     this.form.get('image').updateValueAndValidity()
+
+
     const reader = new FileReader()
     reader.onload = () => {
-      this.imagePreview = (reader.result as string)
+      //this.imagePreview = (reader.result as string)
+      this.imagePreview.push(reader.result as string)
     }
     reader.readAsDataURL(file)
   }
@@ -121,4 +167,26 @@ export class MyPlaceComponent implements OnInit {
     this.placesService.deletePlace(this.userId)
   }
 
+  getImage(url: string): Promise<any>{
+    let b: any
+   return fetch(url)
+  .then(res => res.blob()) // Gets the response and returns it as a blob
+  .then(blob => {
+    // Here's where you get access to the blob
+    // And you can use it for whatever you want
+    // Like calling ref().put(blob)
+    b = blob
+    // Here, I use it to make an image appear on the page
+    console.log("blob")
+    console.log(blob)
+    b.lastModified = Date.now();
+    b.name = "hmm";
+    return b
+     
+})
+;
+
+  }
+
+  
 }

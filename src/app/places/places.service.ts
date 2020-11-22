@@ -14,14 +14,12 @@ export class PlacesService {
     constructor(private http: HttpClient, private router: Router) {}
 
     getPlaces(placesPerPage: number, currentPage: number,userCity:string) {
-      console.log("artik")
       const queryParams = `?pagesize=${placesPerPage}&page=${currentPage}&usercity=${userCity}`
         this.http
           .get<{ message: string; places: any; maxPlaces: number }>(
             "http://localhost:3000/api/places" + queryParams
           )
           .pipe(map((placeData) => {
-            console.log("degisik")
             return { places: placeData.places.map(place => {
               return {
                 title: place.title,
@@ -36,8 +34,6 @@ export class PlacesService {
           }))
           .subscribe(transformedPlaceData => {
             this.places = transformedPlaceData.places;
-            console.log("AAAAAAAAAAAAAAAAAAAA")
-            console.log(this.places)
             this.placesUpdated.next({places:[...this.places],maxPlaces:transformedPlaceData.maxPlaces});
           });
       }
@@ -48,19 +44,26 @@ export class PlacesService {
 
       getPlace(id: string) {
         return this.http.get<{ _id: string; title: string; photo: string; description: string; 
-          imagePath: string;owner: string; city: string; university: string }>(
+          imagePath: string[];owner: string; city: string; university: string }>(
           "http://localhost:3000/api/places/" + id
         );
       }
 
-      addPlace(title: string, description: string, image: File,city: string, uni: string) {
+      addPlace(title: string, description: string, image: File[],city: string, uni: string) {
         const placeData = new FormData()
         placeData.append("title", title)
         placeData.append("description", description)
         placeData.append("city", city)
         placeData.append("uni", uni)
-        placeData.append("image", image, title)
-        //const place: Place = { id: null, title: title, photo: photo, description: description };
+        //placeData.append("image", image, title)
+        let i=0
+        for (const img of image){
+          placeData.append("image",img,`${title}_${i}`)
+          i++;
+        }
+        placeData.append("imageNumber", `${i}`)
+
+
         this.http
           .post<{ message: string, place: Place }>("http://localhost:3000/api/places", placeData)
           .subscribe(responseData => {
@@ -68,20 +71,29 @@ export class PlacesService {
           });
       }
 
-      updatePlace(id: string, title: string, description: string, image: File | string) {
+      updatePlace(id: string, title: string, description: string, image: File[] | string[]) {
         //const place: Place = { id: id, title: title,description: description, imagePath: null };
         let placeData;
-        if(typeof(image) === 'object'){
+        console.log(typeof(image))
+        console.log(image)
+        
+        if(typeof(image[(image.length - 1)]) === 'object'){
           placeData = new FormData()
           placeData.append("id",id)
           placeData.append("title",title)
           placeData.append("description",description)
-          placeData.append("image",image,title)
+          //placeData.append("image",image,title)
+          let i = 0
+          for (const img of image){
+            console.log(typeof(img))
+            placeData.append("image",img,`${title}_${i}`)
+            i++
+          }
         }else{  
-          console.log("else")
+
           
           placeData= {id: id, title: title, description: description, imagePath: image}
-          console.log(placeData)
+
         }
         this.http
           .put("http://localhost:3000/api/places/" + id, placeData)
@@ -92,7 +104,6 @@ export class PlacesService {
             // updatedPlaces[oldPlaceIndex] = place;
             // this.places = updatedPlaces;
             // this.placesUpdated.next([...this.places]);
-            console.log(response)
             this.router.navigate(["/"]);
           }, err => {
             console.log(err)
