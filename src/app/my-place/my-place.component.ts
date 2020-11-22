@@ -5,6 +5,8 @@ import { PlacesService } from "../places/places.service"
 import { Place } from "../places/place.model"
 import { mimeType } from "./mime-type.validator"
 import { AuthService } from '../auth/auth.service';
+import {MatDialog} from '@angular/material/dialog';
+import { ConfirmDeleteComponent } from './confirm-delete/confirm-delete.component';
 
 
 
@@ -31,7 +33,8 @@ export class MyPlaceComponent implements OnInit {
   constructor(
     public placesService: PlacesService,
     private authService: AuthService,
-    public route: ActivatedRoute
+    public route: ActivatedRoute,
+    public dialog: MatDialog
     ) {}
 
   ngOnInit(): void {
@@ -52,8 +55,8 @@ export class MyPlaceComponent implements OnInit {
       }
       this.hasPlace = user.hasPlace
       this.user = user
-      console.log("burada")
-      console.log(this.user)
+      // console.log("burada")
+      // console.log(this.user)
       if(user.hasPlace){
         //console.log("yarek")
         
@@ -62,8 +65,8 @@ export class MyPlaceComponent implements OnInit {
           this.place = {id: placeData._id, title: placeData.title, description: placeData.description, 
             imagePath: placeData.imagePath,city:placeData.city, university:placeData.university};
           this.imagePreview = this.place.imagePath
-          console.log("deneme")
-          console.log(this.imagePreview[0])
+          // console.log("deneme")
+          // console.log(this.imagePreview[0])
 
           for(const img of this.imagePreview){
             // const indx = img.lastIndexOf("\.")
@@ -91,13 +94,13 @@ export class MyPlaceComponent implements OnInit {
               // Like calling ref().put(blob)
               b = blob
               // Here, I use it to make an image appear on the page
-              console.log("blob")
-              console.log(blob)
+              // console.log("blob")
+              // console.log(blob)
               b.lastModified = Date.now();
               b.name = img;
               //return b
-              console.log("dosyammm")
-              console.log(b)
+              // console.log("dosyammm")
+              // console.log(b)
               this.imageFiles.push(b)
                
           })
@@ -121,13 +124,8 @@ export class MyPlaceComponent implements OnInit {
     }
     this.isLoading = true
     if (!this.hasPlace) {
-      console.log("city")
-      console.log(this.user.city)
-      console.log("uni")
-      console.log(this.user.university)
       this.placesService.addPlace(this.form.value.title, this.form.value.description,this.imageFiles,this.user.user.city,this.user.user.university);
     }else {
-      console.log("zaqa")
       this.placesService.updatePlace(
         this.userId,
         this.form.value.title,
@@ -143,50 +141,56 @@ export class MyPlaceComponent implements OnInit {
 
   onImagePicked(event: Event){
     const file = (event.target as HTMLInputElement).files[0]
-
+    if(!file){
+      return
+    }
+    let aqq
     // const tmpFile = this.form.value.image
     // console.log(tmpFile)
     // tmpFile.push(file)
     //this.imageFiles
     console.log("onemli")
     console.log(file)
-    this.imageFiles.push(file)
+    console.log("invalid")
+    console.log(this.form.get('image').invalid)
     this.form.patchValue({'image': file})
-    this.form.get('image').updateValueAndValidity()
-
-
-    const reader = new FileReader()
-    reader.onload = () => {
-      //this.imagePreview = (reader.result as string)
-      this.imagePreview.push(reader.result as string)
-    }
-    reader.readAsDataURL(file)
+    console.log(this.form.get('image'))
+    this.form.get('image').updateValueAndValidity({onlySelf: true})
+    aqq = this.form.get('image')
+    console.log(this.form.get('image'))
+    console.log(this.form.get('image').valid)
+    console.log(this.form.get('image').invalid)
+    console.log(this.form.get('image').status)
+    setTimeout(() =>{
+      if(!this.form.get('image').valid){
+        console.log("ONAYSIZZZZ")
+        location.reload()
+        return
+      }
+      this.imageFiles.push(file)
+  
+      const reader = new FileReader()
+      reader.onload = () => {
+        //this.imagePreview = (reader.result as string)
+        this.imagePreview.push(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    },1000)
+    
   }
   
   onDelete() {
-    this.placesService.deletePlace(this.userId)
+    const dialogRef = this.dialog.open(ConfirmDeleteComponent)
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if(res){
+        this.placesService.deletePlace(this.userId)
+      }
+    })
+    
   }
 
-  getImage(url: string): Promise<any>{
-    let b: any
-   return fetch(url)
-  .then(res => res.blob()) // Gets the response and returns it as a blob
-  .then(blob => {
-    // Here's where you get access to the blob
-    // And you can use it for whatever you want
-    // Like calling ref().put(blob)
-    b = blob
-    // Here, I use it to make an image appear on the page
-    console.log("blob")
-    console.log(blob)
-    b.lastModified = Date.now();
-    b.name = "hmm";
-    return b
-     
-})
-;
-
-  }
+ 
 
   
 }

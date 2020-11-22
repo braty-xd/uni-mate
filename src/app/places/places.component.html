@@ -21,11 +21,14 @@
       <mat-card-title>{{ place.title}}</mat-card-title>
       <mat-card-subtitle>{{place.university}}</mat-card-subtitle>
     </mat-card-header>
-    <div *ngFor="let img of place.imagePath">
+    <div class="row">
+    <div *ngFor="let img of place.imagePath" class="col">
     <a [href]="img">
-      <img mat-card-lg-image [src]="img" alt="Photo of a Shiba Inu" (click)="onImageClick()">
+      <img mat-card-lg-image [src]="img" alt="Photo of a Shiba Inu" (click)="onImageClick()"
+      >
     </a>
   </div>
+</div>
     <mat-card-content style="margin-top: 10px;">
       <h3>{{ place.description }}</h3>
     </mat-card-content>

@@ -61,7 +61,7 @@ export class PlacesService {
           placeData.append("image",img,`${title}_${i}`)
           i++;
         }
-        placeData.append("imageNumber", `${i}`)
+        //placeData.append("imageNumber", `${i}`)
 
 
         this.http

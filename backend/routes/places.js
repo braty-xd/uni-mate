@@ -1,6 +1,6 @@
 const express = require("express");
 const multer = require("multer");
-const { consoleTestResultHandler } = require("tslint/lib/test");
+const fs = require("fs");
 
 const checkAuth = require("../middleware/check-auth");
 const Place = require("../models/place");
@@ -111,8 +111,17 @@ router.get("/:id", checkAuth, (req, res, next) => {
 });
 
 router.delete("/:id", checkAuth, (req, res, next) => {
+  //Could also delete pics but not doing it for now!!!!!!!!!
   Place.deleteOne({ owner: req.params.id }).then((result) => {
     if (result.n > 0) {
+      console.log(result);
+      // for (const img of resultt.imagePath) {
+      //   let toDelete =
+      //     __dirname.slice(0, __dirname.length - 7) +
+      //     "/images" +
+      //     img.slice(img.indexOf("images") + 6, img.length);
+      //   fs.unlinkSync(toDelete);
+      // }
       res.status(200).json({ message: "Deletion successful!" });
     } else {
       res.status(401).json({ message: "Not authorized!" });
@@ -149,6 +158,15 @@ router.put(
     };
     Place.findOne({ owner: req.userData.userId }).then((resultt) => {
       placeId = resultt._id;
+      //fs.unlinkSync("./asd");
+      console.log(__dirname);
+      for (const img of resultt.imagePath) {
+        let toDelete =
+          __dirname.slice(0, __dirname.length - 7) +
+          "/images" +
+          img.slice(img.indexOf("images") + 6, img.length);
+        fs.unlinkSync(toDelete);
+      }
       Place.updateOne({ _id: placeId, owner: req.userData.userId }, place)
         .then((result) => {
           if (result.n > 0) {

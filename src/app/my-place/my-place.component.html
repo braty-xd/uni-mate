@@ -29,7 +29,9 @@
     <button mat-stroked-button (click)="filePicker.click()" type="button">Resim Ekle</button>
     <input type="file" #filePicker (change)="onImagePicked($event)">
 </div>
-<div *ngFor="let preview of imagePreview">
+<hr>
+<div class="row">
+<div *ngFor="let preview of imagePreview" class="col">
 <div  
 class="image-preview" *ngIf="preview !== '' && preview && form.get('image').valid">
     <img [src]="preview" 
@@ -37,6 +39,8 @@ class="image-preview" *ngIf="preview !== '' && preview && form.get('image').vali
     >
 </div>
 </div>
+</div>
+<hr>
 <button
 mat-raised-button
 color="primary"
