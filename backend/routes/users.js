@@ -86,6 +86,19 @@ router.get("/:id", checkAuth, (req, res, next) => {
 });
 
 router.put("/:id", checkAuth, (req, res, next) => {
+  if (req.body.nameSurname) {
+    User.updateOne(
+      { _id: req.params.id },
+      { nameSurname: req.body.nameSurname, sex: req.body.sex }
+    ).then((result) => {
+      if (result.n > 0) {
+        res.status(200).json({ message: "Update successful!" });
+      } else {
+        res.status(401).json({ message: "Update faileaaaaaad!" });
+      }
+    });
+    return;
+  }
   if (!req.body.university) {
     User.updateOne(
       { _id: req.params.id },

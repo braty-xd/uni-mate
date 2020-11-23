@@ -6,6 +6,9 @@ import { Place } from "../places/place.model"
 import { mimeType } from "./mime-type.validator"
 import { AuthService } from '../auth/auth.service';
 import {MatDialog} from '@angular/material/dialog';
+import {
+  MatSnackBar,
+} from '@angular/material/snack-bar';
 import { ConfirmDeleteComponent } from './confirm-delete/confirm-delete.component';
 
 
@@ -27,14 +30,17 @@ export class MyPlaceComponent implements OnInit {
   private user: any
   private userId: string
   private hasPlace: boolean
+  private userSex: string
   isCitySelected: boolean
+  isDetailSelected: boolean
   imageFiles: any[] =[]
 
   constructor(
     public placesService: PlacesService,
     private authService: AuthService,
     public route: ActivatedRoute,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    private _snackBar: MatSnackBar
     ) {}
 
   ngOnInit(): void {
@@ -45,13 +51,22 @@ export class MyPlaceComponent implements OnInit {
       'title': new FormControl(null, {validators: [Validators.required,Validators.maxLength(50)]}),
       'description': new FormControl(null, {validators: [Validators.required]}),
       'image': new FormControl(null, {validators:[Validators.required], asyncValidators: [mimeType]}),
+      'rent': new FormControl(null,{validators:[Validators.required,Validators.max(10000)]})
       //'images' : new FormControl(null)
     })
     this.authService.getUser(this.userId).subscribe((user) => {
+      this.userSex = user.user.sex
+      console.log("bas")
+      console.log(user)
       if(user.user.city){
         this.isCitySelected  = true
       }else{
         this.isCitySelected  = false
+      }
+      if(user.user.nameSurname){
+        this.isDetailSelected = true
+      }else{
+        this.isDetailSelected = false
       }
       this.hasPlace = user.hasPlace
       this.user = user
@@ -63,7 +78,8 @@ export class MyPlaceComponent implements OnInit {
         this.placesService.getPlace(this.userId).subscribe(placeData => {
           this.isLoading = false;
           this.place = {id: placeData._id, title: placeData.title, description: placeData.description, 
-            imagePath: placeData.imagePath,city:placeData.city, university:placeData.university};
+            imagePath: placeData.imagePath,city:placeData.city, university:placeData.university,
+            rent:+placeData.rent,ownerSex:placeData.ownerSex};
           this.imagePreview = this.place.imagePath
           // console.log("deneme")
           // console.log(this.imagePreview[0])
@@ -107,7 +123,8 @@ export class MyPlaceComponent implements OnInit {
 
           }
 
-          this.form.setValue({'title':this.place.title, 'image':this.imagePreview[0],'description':this.place.description})
+          this.form.setValue({'title':this.place.title, 'image':this.imagePreview[0],
+          'description':this.place.description,'rent': +this.place.rent})
         },(err) => {
           console.log("zaaaadfafsdfg")
         });
@@ -118,20 +135,28 @@ export class MyPlaceComponent implements OnInit {
 
   }
   onSavePlace() {
+    if(!this.form.value.image){
+      this._snackBar.open("En az bir resim eklemeniz gerekiyor","Resim Ekle",{duration: 1000})
+    }
     if (this.form.invalid) {
+      
       console.log("OLMADII")
       return;
     }
+    
     this.isLoading = true
     if (!this.hasPlace) {
-      this.placesService.addPlace(this.form.value.title, this.form.value.description,this.imageFiles,this.user.user.city,this.user.user.university);
+      this.placesService.addPlace(this.form.value.title, this.form.value.description,this.imageFiles
+        ,this.user.user.city,this.user.user.university,`${this.form.value.rent}`,this.userSex);
     }else {
       this.placesService.updatePlace(
         this.userId,
         this.form.value.title,
         this.form.value.description,
         //this.form.value.image
-        this.imageFiles
+        this.imageFiles,
+        `${this.form.value.rent}`,
+        this.userSex
       );
     }
     
@@ -178,9 +203,31 @@ export class MyPlaceComponent implements OnInit {
     },1000)
     
   }
+
+  onDeleteImage(imageToDelete: string) {
+    const dialogRef = this.dialog.open(ConfirmDeleteComponent,{
+      data:"Fotografi silmek uzeresiniz. Onayliyor musunuz?"
+    })
+
+    dialogRef.afterClosed().subscribe((res) => {
+      if(res){
+        //deleting image
+        this.imageFiles.splice(this.imagePreview.indexOf(imageToDelete),1)
+        this.imagePreview.splice(this.imagePreview.indexOf(imageToDelete),1)
+        if(this.imagePreview){
+          this.form.patchValue({'image': this.imageFiles[0]})
+        }else{
+          this.form.patchValue({'image': null})
+        }       
+        this.form.get('image').updateValueAndValidity({onlySelf: true})
+      }
+    })
+  }
   
   onDelete() {
-    const dialogRef = this.dialog.open(ConfirmDeleteComponent)
+    const dialogRef = this.dialog.open(ConfirmDeleteComponent,{
+      data:"Ilaninizi silmek uzeresiniz. Onayliyor musunuz?"
+    })
 
     dialogRef.afterClosed().subscribe((res) => {
       if(res){

@@ -43,18 +43,20 @@ export class PlacesService {
       }
 
       getPlace(id: string) {
-        return this.http.get<{ _id: string; title: string; photo: string; description: string; 
-          imagePath: string[];owner: string; city: string; university: string }>(
+        return this.http.get<{ _id: string; title: string;  description: string; 
+          imagePath: string[];owner: string; city: string; university: string; rent: string; ownerSex: string }>(
           "http://localhost:3000/api/places/" + id
         );
       }
 
-      addPlace(title: string, description: string, image: File[],city: string, uni: string) {
+      addPlace(title: string, description: string, image: File[],city: string, uni: string,rent: string,ownerSex: string) {
         const placeData = new FormData()
         placeData.append("title", title)
         placeData.append("description", description)
         placeData.append("city", city)
         placeData.append("uni", uni)
+        placeData.append("rent",rent)
+        placeData.append("ownerSex",ownerSex)
         //placeData.append("image", image, title)
         let i=0
         for (const img of image){
@@ -71,7 +73,7 @@ export class PlacesService {
           });
       }
 
-      updatePlace(id: string, title: string, description: string, image: File[] | string[]) {
+      updatePlace(id: string, title: string, description: string, image: File[] | string[],rent: string,ownerSex: string) {
         //const place: Place = { id: id, title: title,description: description, imagePath: null };
         let placeData;
         console.log(typeof(image))
@@ -82,6 +84,8 @@ export class PlacesService {
           placeData.append("id",id)
           placeData.append("title",title)
           placeData.append("description",description)
+          placeData.append("rent",rent)
+          placeData.append("ownerSex",ownerSex)
           //placeData.append("image",image,title)
           let i = 0
           for (const img of image){
@@ -92,7 +96,7 @@ export class PlacesService {
         }else{  
 
           
-          placeData= {id: id, title: title, description: description, imagePath: image}
+          placeData= {id: id, title: title, description: description, imagePath: image,rent: rent, ownerSex: ownerSex}
 
         }
         this.http

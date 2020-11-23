@@ -62,6 +62,13 @@ export class AuthService{
         })
     }
 
+    updateUserDetails(userId:string, nameSurname: string, sex: string) {
+        this.http.put("http://localhost:3000/api/users/" + userId,{nameSurname:nameSurname,sex:sex})
+        .subscribe(res => {
+            this.router.navigate(["/"]);
+        })
+    }
+
     login(email: string, passwd: string,snackbar: MatSnackBar) {
         const authData: AuthData = {
             email: email,

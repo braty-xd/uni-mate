@@ -20,6 +20,8 @@ export class MyAccountComponent implements OnInit {
   selectedCity: string
   selectedUniversity: string
   myPlace: any
+  selectedSex: string
+  nameSurname: string
 
   constructor(private authService: AuthService, private placesService: PlacesService, public dialog: MatDialog) {}
 
@@ -29,6 +31,8 @@ export class MyAccountComponent implements OnInit {
       this.userUni = user.user.university
       this.userId = user.user._id
       this.hasPlace = user.hasPlace
+      this.selectedSex = user.user.sex
+      this.nameSurname = user.user.nameSurname
       if(this.hasPlace){
         this.placesService.getPlace(localStorage.getItem("userId")).subscribe(place => {          
           this.myPlace = place
@@ -61,6 +65,10 @@ export class MyAccountComponent implements OnInit {
       this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
     }
     //this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
+  }
+
+  onSaveUserDetails(form: NgForm){
+    this.authService.updateUserDetails(this.userId,this.nameSurname,this.selectedSex)
   }
 
 

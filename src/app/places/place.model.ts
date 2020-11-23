@@ -4,5 +4,7 @@ export interface Place {
     description: string,
     imagePath: string[],
     city: string,
-    university: string
+    university: string,
+    rent: number,
+    ownerSex: string
 }

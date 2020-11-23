@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { PageEvent } from '@angular/material/paginator';
+import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { Place } from './place.model';
@@ -22,7 +23,8 @@ export class PlacesComponent implements OnInit, OnDestroy {
   userCity: string
   isCitySelected: boolean
 
-  constructor(public placesService: PlacesService, private authService: AuthService) { }
+  constructor(public placesService: PlacesService, private authService: AuthService, 
+    private router: Router,public route: ActivatedRoute,) { }
 
   onChangedPage(pageData: PageEvent) {
     this.isLoading = true
@@ -54,6 +56,12 @@ export class PlacesComponent implements OnInit, OnDestroy {
     });
   }
 
+  onPlaceClick(placeId: string) {
+      this.router.navigate([""],{relativeTo: this.route}).then(res => {
+        console.log(this.route)
+      })
+  }
+
 
   ngOnDestroy() {
     if(this.placesSub){
@@ -61,5 +69,6 @@ export class PlacesComponent implements OnInit, OnDestroy {
     }
     
   }
+
 
 }

@@ -52,6 +52,8 @@ router.post(
       owner: req.userData.userId,
       city: req.body.city,
       university: req.body.uni,
+      rent: req.body.rent,
+      ownerSex: req.body.ownerSex,
     });
     place.save().then((createdPlace) => {
       User.updateOne({ _id: createdPlace.owner }, { hasPlace: true }).then(

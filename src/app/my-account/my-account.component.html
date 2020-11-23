@@ -28,3 +28,34 @@
   type="submit">Universiteyi Kaydet</button>
 </form>
 </mat-card>
+
+
+
+<mat-card>
+  <h2>Cinsiyet</h2>
+  <div>
+   
+      <mat-radio-group [(ngModel)]="selectedSex" aria-label="Select an option" required>
+        <mat-radio-button value="E">Erkek</mat-radio-button>
+        <mat-radio-button value="K">Kadin</mat-radio-button>
+      </mat-radio-group>
+
+    
+
+  </div>
+  <h2>Isim Soyisim</h2>
+  <mat-form-field appearance="fill">
+    <mat-label>Isim Soyisim</mat-label>
+    <input matInput [(ngModel)]="nameSurname">
+  </mat-form-field>
+<form #SaveDetails="ngForm" (submit)="onSaveUserDetails(SaveDetails)">
+
+<button
+mat-raised-button
+[disabled]="!selectedSex || !nameSurname"
+color="primary"
+style="display:block; margin-left: auto;"
+type="submit">Detaylari Kaydet</button>
+</form>
+</mat-card>
+

@@ -1,44 +1,55 @@
-<div *ngIf="!isCitySelected">
+<div *ngIf="!isCitySelected || !isDetailSelected">
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <div class="card text-white bg-danger mb-3" style="max-width: 100%;" *ngIf="!isLoading">
       <div class="card-header">Dikkat</div>
       <div class="card-body">
-        <h5 class="card-title">Mevcut Universite Bulunamadi</h5>
-        <p class="card-text">Yeni bir ilan olusturmak icin universitenizi secin</p>
+        <h5 class="card-title">Mevcut Universite ve Kullanici Detaylari</h5>
+        <p class="card-text">Yeni bir ilan olusturmak icin universitenizi secmeniz ve kullanici detaylarini girmeniz gerekmektedir</p>
       </div>
     </div>
     
   </div>
 
-<div *ngIf="isCitySelected">
+<div *ngIf="isCitySelected && isDetailSelected">
 <mat-card>
     <mat-spinner *ngIf="isLoading"></mat-spinner>
 <form [formGroup]="form" (submit)="onSavePlace()" *ngIf="!isLoading">
 <mat-form-field appearance="fill" style="width: 50%;">
     <mat-label>Baslik</mat-label>
-    <input  formControlName="title"  matInput placeholder="title" name="title" >
+    <input  formControlName="title"  matInput placeholder="Baslik" name="title" >
     <mat-error *ngIf="form.get('title').invalid">Bir baslik giriniz</mat-error>
 </mat-form-field>
 
 <mat-form-field appearance="fill" style="width: 100%;">
     <mat-label>Aciklama</mat-label>
-    <input formControlName="description"  matInput placeholder="description" name="description">
+    <input formControlName="description"  matInput placeholder="Aciklama" name="description">
     <mat-error *ngIf="form.get('description').invalid">Aciklama giriniz</mat-error>
 </mat-form-field>
+<mat-form-field appearance="fill" style="width: 100%;">
+  <mat-label>Kira</mat-label>
+  <input formControlName="rent" type="number"  matInput placeholder="kira" name="rent">
+  <mat-error *ngIf="form.get('description').invalid">Kira giriniz</mat-error>
+</mat-form-field>
 <div>
-    <button mat-stroked-button (click)="filePicker.click()" type="button">Resim Ekle</button>
+    <button mat-stroked-button (click)="filePicker.click()" type="button">Fotograf Ekle</button>
     <input type="file" #filePicker (change)="onImagePicked($event)">
 </div>
+
 <hr>
 <div class="row">
-<div *ngFor="let preview of imagePreview" class="col">
-<div  
-class="image-preview" *ngIf="preview !== '' && preview && form.get('image').valid">
-    <img [src]="preview" 
-    [alt]="preview"
-    >
-</div>
-</div>
+  <div *ngFor="let preview of imagePreview" class="col">
+    <button type="button" (click)="onDeleteImage(preview)">
+    <div class="hovereffect">
+    <div  
+    class="image-preview" *ngIf="preview !== '' && preview && form.get('image').valid">
+        <img [src]="preview" 
+        [alt]="preview"
+        >
+        <div class="overlay"></div>
+    </div>
+    </div>
+    </button>
+  </div>
 </div>
 <hr>
 <button
