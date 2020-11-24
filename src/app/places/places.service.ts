@@ -13,8 +13,15 @@ export class PlacesService {
 
     constructor(private http: HttpClient, private router: Router) {}
 
-    getPlaces(placesPerPage: number, currentPage: number,userCity:string) {
-      const queryParams = `?pagesize=${placesPerPage}&page=${currentPage}&usercity=${userCity}`
+    getPlaces(placesPerPage: number, currentPage: number,userCity:string,
+      orderByUni: string = null, orderBySex: string = null, maxRent: string = null) {
+      
+      
+      let queryParams = `?pagesize=${placesPerPage}&page=${currentPage}&usercity=${userCity}`
+      if(orderByUni){queryParams+=`&uni=${orderByUni}`}
+      if(orderBySex){queryParams+=`&sex=${orderBySex}`}
+      if(maxRent){queryParams+=`&maxrent=${maxRent}`}
+      console.log(queryParams)
         this.http
           .get<{ message: string; places: any; maxPlaces: number }>(
             "http://localhost:3000/api/places" + queryParams

@@ -21,7 +21,12 @@ export class PlacesComponent implements OnInit, OnDestroy {
   maxPlaces = 0
   pageSizeOptions = [1,2,5,10]
   userCity: string
+  userUni: string
+  userSex: string
   isCitySelected: boolean
+  orderByUni: boolean = false
+  orderBySex: boolean = false
+  maxRent: string = "0"
 
   constructor(public placesService: PlacesService, private authService: AuthService, 
     private router: Router,public route: ActivatedRoute,) { }
@@ -41,6 +46,8 @@ export class PlacesComponent implements OnInit, OnDestroy {
     this.isLoading = true
     this.authService.getUser(localStorage.getItem("userId")).subscribe((user) => {
       this.userCity = user.user.city
+      this.userUni = user.user.university
+      this.userSex = user.user.sex  
       if(user.user.city){
         this.isCitySelected  = true
       }else{
@@ -54,12 +61,25 @@ export class PlacesComponent implements OnInit, OnDestroy {
       this.places = placeData.places;
       this.maxPlaces = placeData.maxPlaces
     });
+    
   }
 
   onPlaceClick(placeId: string) {
+    //sonra ilgilenicem
       this.router.navigate([""],{relativeTo: this.route}).then(res => {
         console.log(this.route)
       })
+  }
+
+
+  onFilterChange() {
+    console.log(this.orderBySex,this.orderByUni,this.maxRent)
+    console.log(typeof(this.maxRent))
+    const searchingSex = this.orderBySex ? this.userSex : null
+    const searchingUni = this.orderByUni ? this.userUni : null
+    const searchingMaxRent = "0" !== this.maxRent ?  this.maxRent: null
+    this.placesService.getPlaces(this.placesPerPage,this.currentPage,this.userCity
+      ,searchingUni,searchingSex,searchingMaxRent);
   }
 
 

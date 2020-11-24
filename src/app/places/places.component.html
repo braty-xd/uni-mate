@@ -15,6 +15,69 @@
 <div *ngIf="isCitySelected">
 <mat-spinner *ngIf="isLoading"></mat-spinner>
 <div *ngIf="!isLoading">
+  <div class="row">
+  <button mat-raised-button color="accent" style="display: block; margin-left: auto;"
+   [matMenuTriggerFor]="menu">Filtre</button>
+  
+  <mat-menu #menu="matMenu"  >  
+  <div (click) = "$event.stopPropagation()">
+  <div  mat-menu-item>
+    <mat-slide-toggle [(ngModel)]="orderByUni" (change)="onFilterChange()" >
+      Ayni universiteden ilanlari goster</mat-slide-toggle>
+  </div>
+
+
+  <div  mat-menu-item>
+    <mat-slide-toggle [(ngModel)]="orderBySex" (change)="onFilterChange()" >
+      Ayni cinsiyetten ilanlari goster</mat-slide-toggle>
+  </div>
+
+
+  <div  mat-menu-item>
+    <button mat-menu-item [matMenuTriggerFor]="maxRentt">Maksimum Kira</button>
+  </div>
+</div>
+</mat-menu>
+<mat-menu #maxRentt="matMenu">
+  <div (click) = "$event.stopPropagation()">
+    <mat-radio-group class="example-radio-group"
+     (change)="onFilterChange()"  [(ngModel)]="maxRent">
+      <mat-radio-button class="example-radio-button"  value="0">
+        -
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="1000">
+        1000
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="1500">
+        1500
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="2000">
+        2000
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="2500">
+        2500
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="3000">
+        3000
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="4000">
+        4000
+      </mat-radio-button>
+      <mat-radio-button class="example-radio-button"  value="5000">
+        5000
+      </mat-radio-button>
+    </mat-radio-group>
+  <!-- <button mat-menu-item>1000</button>
+  <button mat-menu-item>1500</button>
+  <button mat-menu-item>2000</button>
+  <button mat-menu-item>2500</button>
+  <button mat-menu-item>3000</button>
+  <button mat-menu-item>4000</button>
+  <button mat-menu-item>5000</button> -->
+  </div>
+</mat-menu>
+</div>
+<hr>
 <mat-card class="example-card" *ngFor="let place of places">
     <mat-card-header>
       <img mat-card-avatar src="https://banner2.cleanpng.com/20180206/wzw/kisspng-house-clip-art-housing-cliparts-5a79b9d6e34e74.0473159715179268709311.jpg">

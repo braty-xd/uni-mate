@@ -25,6 +25,8 @@ import {MatSelectModule} from '@angular/material/select';
 import {MatSnackBarModule} from '@angular/material/snack-bar';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatRadioModule} from '@angular/material/radio';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 import { SignInComponent } from './auth/sign-in/sign-in.component';
 import { SignUpComponent } from './auth/sign-up/sign-up.component'
 import { AuthInterceptor } from './auth/auth-interceptor';
@@ -64,7 +66,9 @@ import { ConfirmDeleteComponent } from './my-place/confirm-delete/confirm-delete
     MatSelectModule,
     MatSnackBarModule,
     MatDialogModule,
-    MatRadioModule
+    MatRadioModule,
+    MatMenuModule,
+    MatSlideToggleModule
   ],
   providers: [{provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor,multi: true}],
   bootstrap: [AppComponent]

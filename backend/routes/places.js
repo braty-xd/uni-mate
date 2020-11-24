@@ -78,7 +78,18 @@ router.post(
 router.get("", checkAuth, (req, res, next) => {
   const pageSize = +req.query.pagesize;
   const currentPage = +req.query.page;
-  const placeQuery = Place.find({ city: req.query.usercity });
+  let queryObj = { city: req.query.usercity };
+  if (req.query.uni) {
+    queryObj.university = req.query.uni;
+  }
+  if (req.query.sex) {
+    queryObj.ownerSex = req.query.sex;
+  }
+  if (req.query.maxrent) {
+    queryObj.rent = { $lte: +req.query.maxrent };
+  }
+  //const placeQuery = Place.find({ city: req.query.usercity });
+  const placeQuery = Place.find(queryObj);
   let fetchedPlaces;
   if (pageSize && currentPage) {
     placeQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
