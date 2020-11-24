@@ -68,6 +68,11 @@ export class MyAccountComponent implements OnInit {
   }
 
   onSaveUserDetails(form: NgForm){
+    if(this.hasPlace){
+      this.myPlace.ownerSex = this.selectedSex
+      console.log(this.myPlace)
+      this.placesService.updateSexOfPlaceOwner(this.myPlace._id,this.myPlace.ownerSex)
+    }
     this.authService.updateUserDetails(this.userId,this.nameSurname,this.selectedSex)
   }
 

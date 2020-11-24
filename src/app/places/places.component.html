@@ -81,9 +81,15 @@
 <mat-card class="example-card" *ngFor="let place of places">
     <mat-card-header>
       <img mat-card-avatar src="https://banner2.cleanpng.com/20180206/wzw/kisspng-house-clip-art-housing-cliparts-5a79b9d6e34e74.0473159715179268709311.jpg">
-      <mat-card-title>{{ place.title}}</mat-card-title>
-      <mat-card-subtitle>{{place.university}}</mat-card-subtitle>
+      
+        <mat-card-title>{{ place.title}}</mat-card-title>
+        
+        <mat-card-subtitle>{{place.university}}</mat-card-subtitle>
+    
+      
+      
     </mat-card-header>
+    
     <div class="row">
     <div *ngFor="let img of place.imagePath" class="col">
     <a [href]="img">
@@ -93,6 +99,10 @@
   </div>
 </div>
     <mat-card-content style="margin-top: 10px;">
+      <h2>Kira: {{place.rent}}₺</h2>
+      <h2 *ngIf="place.ownerSex === 'K'">İlan Sahibi: <font color="#FF1493">Kadın</font> </h2>
+      <h2 *ngIf="place.ownerSex === 'E'">İlan Sahibi: <font color="#0000FF">Erkek</font> </h2>
+
       <h3>{{ place.description }}</h3>
     </mat-card-content>
     <!-- <mat-card-actions>
@@ -100,6 +110,7 @@
       <button mat-button>SHARE</button>
     </mat-card-actions> -->
     <!-- <hr> -->
+
     <button
 mat-raised-button
 color="accent"
@@ -107,6 +118,7 @@ style="display: block;  margin-top: 1rem; margin-left: auto; width: 10%;"
 (click)="onPlaceClick(place.id)"
 type="button">Ilani Incele</button>
 
+    
   </mat-card>
 </div>
 

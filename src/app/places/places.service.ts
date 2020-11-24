@@ -35,7 +35,9 @@ export class PlacesService {
                 imagePath: place.imagePath,
                 owner: place.owner,
                 city: place.city,
-                university: place.university
+                university: place.university,
+                rent: place.rent,
+                ownerSex: place.ownerSex
               };
             }), maxPlaces: placeData.maxPlaces};
           }))
@@ -80,7 +82,23 @@ export class PlacesService {
           });
       }
 
-      updatePlace(id: string, title: string, description: string, image: File[] | string[],rent: string,ownerSex: string) {
+      updateSexOfPlaceOwner(id: string, sex: string) {
+        console.log("myid")
+        console.log(id)
+        this.http.put("http://localhost:3000/api/places/" + id, {ownerSex: sex}).subscribe(response => {
+          // const updatedPlaces = [...this.places];
+          // const oldPlaceIndex = updatedPlaces.findIndex(p => p.id === id);
+          // const place: Place = {id: id, title: title, description: description, imagePath: ""}
+          // updatedPlaces[oldPlaceIndex] = place;
+          // this.places = updatedPlaces;
+          // this.placesUpdated.next([...this.places]);
+          this.router.navigate(["/"]);
+        }, err => {
+          console.log(err)
+        });
+      }
+      updatePlace(id: string, title: string, description: string, image: File[] | string[]
+        ,rent: string,ownerSex: string) {
         //const place: Place = { id: id, title: title,description: description, imagePath: null };
         let placeData;
         console.log(typeof(image))

@@ -146,7 +146,31 @@ router.put(
   "/:id",
   checkAuth,
   multer({ storage: storage }).array("image"),
-  (req, res, next) => {
+  async (req, res, next) => {
+    console.log("ALOOOOOOOOOOOOO");
+    console.log(req.files);
+    if (!req.files) {
+      console.log("nott");
+      console.log(req.params);
+      await Place.updateOne(
+        { _id: req.params.id },
+        { ownerSex: req.body.ownerSex }
+      )
+        .then((plc) => {
+          if (plc.n > 0) {
+            res.status(200).json({ message: "Update successful!" });
+          } else {
+            res.status(401).json({ message: "Update faileaaaaaad!" });
+          }
+        })
+        .catch((err) => {
+          console.log("errrr");
+          console.log(err);
+        });
+    }
+    if (!req.files) {
+      return;
+    }
     //let imagePath = req.body.imagePath;
     let placeId;
     //let images = req.body.imagePath;
