@@ -7,7 +7,7 @@ const placeSchema = mongoose.Schema({
   owner: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   city: { type: String, required: true },
   university: { type: String, required: true },
-  rent: { type: String, required: true },
+  rent: { type: Number, required: true },
   ownerSex: { type: String, required: true },
 });
 

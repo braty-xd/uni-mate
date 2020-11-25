@@ -92,16 +92,17 @@
     
     <div class="row">
     <div *ngFor="let img of place.imagePath" class="col">
-    <a [href]="img">
+    
       <img mat-card-lg-image [src]="img" alt="Photo of a Shiba Inu" (click)="onImageClick()"
       >
-    </a>
+    
   </div>
 </div>
+  <hr>
     <mat-card-content style="margin-top: 10px;">
-      <h2>Kira: {{place.rent}}₺</h2>
-      <h2 *ngIf="place.ownerSex === 'K'">İlan Sahibi: <font color="#FF1493">Kadın</font> </h2>
-      <h2 *ngIf="place.ownerSex === 'E'">İlan Sahibi: <font color="#0000FF">Erkek</font> </h2>
+      <h2>Kira: <span style="color:'#009933'" >{{place.rent}}₺</span></h2>
+      <h2 *ngIf="place.ownerSex === 'K'">İlan Sahibi: <span style="color:'#FF1493'" >Kadın</span> </h2>
+      <h2 *ngIf="place.ownerSex === 'E'">İlan Sahibi: <span style="color:'#0000FF'">Erkek</span> </h2>
 
       <h3>{{ place.description }}</h3>
     </mat-card-content>
@@ -115,7 +116,7 @@
 mat-raised-button
 color="accent"
 style="display: block;  margin-top: 1rem; margin-left: auto; width: 10%;"
-(click)="onPlaceClick(place.id)"
+(click)="onPlaceClick(place.owner)"
 type="button">Ilani Incele</button>
 
     

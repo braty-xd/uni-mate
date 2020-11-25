@@ -79,7 +79,7 @@ export class MyPlaceComponent implements OnInit {
           this.isLoading = false;
           this.place = {id: placeData._id, title: placeData.title, description: placeData.description, 
             imagePath: placeData.imagePath,city:placeData.city, university:placeData.university,
-            rent:+placeData.rent,ownerSex:placeData.ownerSex};
+            rent:+placeData.rent,ownerSex:placeData.ownerSex, owner: placeData.owner};
           this.imagePreview = this.place.imagePath
           // console.log("deneme")
           // console.log(this.imagePreview[0])

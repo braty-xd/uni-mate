@@ -1,0 +1,36 @@
+
+<mat-spinner *ngIf="isLoading"></mat-spinner>
+
+
+
+<div *ngIf="!isLoading">
+  <button mat-button (click)="onBackClick()">
+    <mat-icon aria-hidden="false" 
+  aria-label="Example home icon">keyboard_backspace</mat-icon>
+  </button>
+  <hr>
+  <mat-card>
+  <h2 *ngIf="place.ownerSex === 'K'">Ilan Sahibi: <span style="font-family: 'Times New Roman', Times, serif;" >{{user.nameSurname}} | </span><span style="font-family: 'Times New Roman', Times, serif; color:'#FF1493'">Kadın</span> </h2>
+  <h2 *ngIf="place.ownerSex === 'E'">Ilan Sahibi: <span style="font-family: 'Times New Roman', Times, serif;" >{{user.nameSurname}} | </span><span style="font-family: 'Times New Roman', Times, serif; color:'#0000FF'">Erkek</span> </h2>
+
+  <h2>Iletisim Bilgisi: <span style="font-family: 'Times New Roman', Times, serif;" >{{user.email}}</span></h2>
+  <h2>Kira: <span style="font-family: 'Times New Roman', Times, serif;" >{{place.rent}}₺</span></h2>
+  <h2><span style="font-family: 'Times New Roman', Times, serif;" >{{place.university}}</span></h2>
+    <h3>{{place.description}}</h3>
+    <hr>
+  <div class="row">
+  <div *ngFor="let img of place.imagePath" class="col-md-4">
+
+    <div class="hovereffect" style="margin-left: 1rem;">
+      <button mat-button type="button" (click)="onImageClick(img)"> 
+        <img [src]="img" class="img-fluid" alt="Responsive image"> 
+        <div class="overlay"></div>
+      </button>
+    
+   
+    </div>
+  </div>
+  </div>
+</mat-card>
+</div>
+

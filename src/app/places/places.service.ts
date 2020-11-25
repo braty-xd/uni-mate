@@ -82,6 +82,20 @@ export class PlacesService {
           });
       }
 
+      updateUniOfPlace(id: string, uni: string) {
+        this.http.put("http://localhost:3000/api/places/" + id, {university: uni}).subscribe(response => {
+          // const updatedPlaces = [...this.places];
+          // const oldPlaceIndex = updatedPlaces.findIndex(p => p.id === id);
+          // const place: Place = {id: id, title: title, description: description, imagePath: ""}
+          // updatedPlaces[oldPlaceIndex] = place;
+          // this.places = updatedPlaces;
+          // this.placesUpdated.next([...this.places]);
+          this.router.navigate(["/"]);
+        }, err => {
+          console.log(err)
+        });
+      }
+
       updateSexOfPlaceOwner(id: string, sex: string) {
         console.log("myid")
         console.log(id)

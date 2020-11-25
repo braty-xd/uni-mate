@@ -6,5 +6,6 @@ export interface Place {
     city: string,
     university: string,
     rent: number,
-    ownerSex: string
+    ownerSex: string,
+    owner: string
 }

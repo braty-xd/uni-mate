@@ -32,6 +32,7 @@ import { SignUpComponent } from './auth/sign-up/sign-up.component'
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { ConfirmDialogComponent } from './my-account/confirm-dialog/confirm-dialog.component';
 import { ConfirmDeleteComponent } from './my-place/confirm-delete/confirm-delete.component';
+import { ImageComponent } from './places/place/image/image.component';
 
 
 
@@ -46,6 +47,7 @@ import { ConfirmDeleteComponent } from './my-place/confirm-delete/confirm-delete
     SignUpComponent,
     ConfirmDialogComponent,
     ConfirmDeleteComponent,
+    ImageComponent,
   ],
   imports: [
     BrowserModule,

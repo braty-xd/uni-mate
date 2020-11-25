@@ -52,7 +52,7 @@ router.post(
       owner: req.userData.userId,
       city: req.body.city,
       university: req.body.uni,
-      rent: req.body.rent,
+      rent: +req.body.rent,
       ownerSex: req.body.ownerSex,
     });
     place.save().then((createdPlace) => {
@@ -146,27 +146,44 @@ router.put(
   "/:id",
   checkAuth,
   multer({ storage: storage }).array("image"),
-  async (req, res, next) => {
-    console.log("ALOOOOOOOOOOOOO");
-    console.log(req.files);
+  (req, res, next) => {
     if (!req.files) {
-      console.log("nott");
-      console.log(req.params);
-      await Place.updateOne(
-        { _id: req.params.id },
-        { ownerSex: req.body.ownerSex }
-      )
-        .then((plc) => {
-          if (plc.n > 0) {
-            res.status(200).json({ message: "Update successful!" });
-          } else {
-            res.status(401).json({ message: "Update faileaaaaaad!" });
-          }
-        })
-        .catch((err) => {
-          console.log("errrr");
-          console.log(err);
-        });
+      if (req.body.ownerSex) {
+        Place.updateOne({ _id: req.params.id }, { ownerSex: req.body.ownerSex })
+          .then((plc) => {
+            if (plc.n > 0) {
+              res.status(200).json({ message: "Update successful!" });
+            } else {
+              res.status(401).json({ message: "Update faileaaaaaad!" });
+            }
+          })
+          .catch((err) => {
+            console.log("errrr");
+            console.log(err);
+          });
+      }
+      if (req.body.university) {
+        console.log("selamin helo");
+        console.log(req.params.id);
+        Place.updateOne(
+          { _id: req.params.id },
+          { university: req.body.university }
+        )
+          .then((plc) => {
+            console.log(";)");
+            console.log(plc);
+            if (plc.n > 0) {
+              console.log(";)");
+              res.status(200).json({ message: "Update successful!" });
+            } else {
+              res.status(401).json({ message: "Update faileaaaaqweqweqaad!" });
+            }
+          })
+          .catch((err) => {
+            console.log("errrr");
+            console.log(err);
+          });
+      }
     }
     if (!req.files) {
       return;
@@ -192,6 +209,7 @@ router.put(
       title: req.body.title,
       description: req.body.description,
       imagePath: images,
+      rent: +req.body.rent,
     };
     Place.findOne({ owner: req.userData.userId }).then((resultt) => {
       placeId = resultt._id;

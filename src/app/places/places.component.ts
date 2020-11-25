@@ -64,10 +64,10 @@ export class PlacesComponent implements OnInit, OnDestroy {
     
   }
 
-  onPlaceClick(placeId: string) {
+  onPlaceClick(placeOwnerId: string) {
     //sonra ilgilenicem
-      this.router.navigate([""],{relativeTo: this.route}).then(res => {
-        console.log(this.route)
+      this.router.navigate(["/","place",placeOwnerId]).then(res => {
+        //console.log(this.route)
       })
   }
 
