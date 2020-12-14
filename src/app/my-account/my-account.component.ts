@@ -63,7 +63,10 @@ export class MyAccountComponent implements OnInit {
       })
     }else {
       console.log(form.value.myUni)
-      this.placesService.updateUniOfPlace(this.myPlace._id,form.value.myUni)
+      if(this.hasPlace){
+        this.placesService.updateUniOfPlace(this.myPlace._id,form.value.myUni)
+      }
+      
       this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
     }
     //this.authService.updateUserCity(this.userId,form.value.myCity,form.value.myUni)
